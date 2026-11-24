@@ -1,0 +1,90 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Global default-deny safety net
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() >= 1 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isValidSavedKundali(data) {
+      return data.userId is string && data.userId.size() >= 1 && data.userId.size() <= 128 &&
+             data.chartName is string && data.chartName.size() >= 1 && data.chartName.size() <= 120 &&
+             data.birthYear is int && data.birthYear >= 1800 && data.birthYear <= 2100 &&
+             data.birthMonth is int && data.birthMonth >= 1 && data.birthMonth <= 12 &&
+             data.birthDay is int && data.birthDay >= 1 && data.birthDay <= 31 &&
+             data.birthHour is int && data.birthHour >= 0 && data.birthHour <= 23 &&
+             data.birthMinute is int && data.birthMinute >= 0 && data.birthMinute <= 59 &&
+             data.placeId is string && data.placeId.size() >= 1 && data.placeId.size() <= 80 &&
+             data.placeName is string && data.placeName.size() >= 1 && data.placeName.size() <= 120 &&
+             data.latitude is number && data.latitude >= -66.0 && data.latitude <= 66.0 &&
+             data.longitude is number && data.longitude >= -180.0 && data.longitude <= 180.0 &&
+             data.utcOffsetHours is number && data.utcOffsetHours >= -12.0 && data.utcOffsetHours <= 14.0 &&
+             data.lagnaRashi is string && data.lagnaRashi.size() >= 1 && data.lagnaRashi.size() <= 40 &&
+             data.moonRashi is string && data.moonRashi.size() >= 1 && data.moonRashi.size() <= 40 &&
+             data.notes is string && data.notes.size() <= 500;
+    }
+
+    match /users/{userId}/kundalis/{kundaliId} {
+      allow get: if isOwner(userId) && isValidId(kundaliId);
+      allow list: if isOwner(userId);
+
+      allow create: if isOwner(userId) &&
+                       isValidId(kundaliId) &&
+                       incoming().keys().hasAll([
+                         'userId', 'chartName', 'birthYear', 'birthMonth', 'birthDay',
+                         'birthHour', 'birthMinute', 'placeId', 'placeName',
+                         'latitude', 'longitude', 'utcOffsetHours',
+                         'lagnaRashi', 'moonRashi', 'notes', 'createdAt', 'updatedAt'
+                       ]) &&
+                       incoming().keys().hasOnly([
+                         'userId', 'chartName', 'birthYear', 'birthMonth', 'birthDay',
+                         'birthHour', 'birthMinute', 'placeId', 'placeName',
+                         'latitude', 'longitude', 'utcOffsetHours',
+                         'lagnaRashi', 'moonRashi', 'notes', 'createdAt', 'updatedAt'
+                       ]) &&
+                       incoming().userId == request.auth.uid &&
+                       incoming().createdAt is timestamp &&
+                       incoming().createdAt <= request.time &&
+                       incoming().updatedAt is timestamp &&
+                       incoming().updatedAt <= request.time &&
+                       isValidSavedKundali(incoming());
+
+      allow update: if isOwner(userId) &&
+                       isValidId(kundaliId) &&
+                       isValidSavedKundali(incoming()) &&
+                       incoming().userId == existing().userId &&
+                       incoming().createdAt == existing().createdAt &&
+                       incoming().updatedAt is timestamp &&
+                       incoming().updatedAt <= request.time &&
+                       incoming().diff(existing()).affectedKeys().hasOnly([
+                         'chartName', 'birthYear', 'birthMonth', 'birthDay',
+                         'birthHour', 'birthMinute', 'placeId', 'placeName',
+                         'latitude', 'longitude', 'utcOffsetHours',
+                         'lagnaRashi', 'moonRashi', 'notes', 'updatedAt'
+                       ]);
+
+      allow delete: if isOwner(userId) && isValidId(kundaliId);
+    }
+  }
+}

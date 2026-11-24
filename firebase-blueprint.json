@@ -1,0 +1,108 @@
+{
+  "entities": {
+    "SavedKundali": {
+      "title": "SavedKundali",
+      "description": "A birth or prashna Kundali chart saved by an authenticated user for cloud sync and retrieval.",
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "description": "Firebase Auth UID of the owner."
+        },
+        "chartName": {
+          "type": "string",
+          "description": "Display name or title of the Kundali."
+        },
+        "birthYear": {
+          "type": "integer",
+          "description": "Birth year (1800-2100)."
+        },
+        "birthMonth": {
+          "type": "integer",
+          "description": "Birth month (1-12)."
+        },
+        "birthDay": {
+          "type": "integer",
+          "description": "Birth day (1-31)."
+        },
+        "birthHour": {
+          "type": "integer",
+          "description": "Birth hour (0-23)."
+        },
+        "birthMinute": {
+          "type": "integer",
+          "description": "Birth minute (0-59)."
+        },
+        "placeId": {
+          "type": "string",
+          "description": "Repository place ID or custom identifier."
+        },
+        "placeName": {
+          "type": "string",
+          "description": "Human-readable birth place name."
+        },
+        "latitude": {
+          "type": "number",
+          "description": "Geographic latitude in degrees."
+        },
+        "longitude": {
+          "type": "number",
+          "description": "Geographic longitude in degrees."
+        },
+        "utcOffsetHours": {
+          "type": "number",
+          "description": "UTC offset in hours."
+        },
+        "lagnaRashi": {
+          "type": "string",
+          "description": "Ascendant Rashi enum name."
+        },
+        "moonRashi": {
+          "type": "string",
+          "description": "Moon Rashi enum name."
+        },
+        "notes": {
+          "type": "string",
+          "description": "User consultation or chart notes."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp when created (FieldValue.serverTimestamp())."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp when last updated (FieldValue.serverTimestamp())."
+        }
+      },
+      "required": [
+        "userId",
+        "chartName",
+        "birthYear",
+        "birthMonth",
+        "birthDay",
+        "birthHour",
+        "birthMinute",
+        "placeId",
+        "placeName",
+        "latitude",
+        "longitude",
+        "utcOffsetHours",
+        "lagnaRashi",
+        "moonRashi",
+        "notes",
+        "createdAt",
+        "updatedAt"
+      ]
+    }
+  },
+  "firestore": {
+    "/users/{userId}/kundalis/{kundaliId}": {
+      "schema": {
+        "$ref": "#/entities/SavedKundali"
+      },
+      "description": "Per-user collection of saved Kundali charts supporting thousands of charts per account."
+    }
+  }
+}

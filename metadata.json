@@ -1,0 +1,6 @@
+{
+  "name": "Sampurna Astro",
+  "description": "Vedic astrology app featuring Lahiri Kundali charts, planetary positions, Vimshottari Dasha, Panchang, Gochar transits, Shadbala, Phalit, and Rashifal in Hindi, English, and Chinese.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

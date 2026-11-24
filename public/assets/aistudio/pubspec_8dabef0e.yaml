@@ -1,0 +1,38 @@
+name: shri_sampurna_astrology
+description: श्री सम्पूर्णा एस्ट्रोलॉजी - वैदिक ज्योतिष ऐप
+publish_to: 'none'
+version: 0.1.0+1
+
+environment:
+  sdk: '>=3.3.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  intl: any
+  shared_preferences: ^2.2.3
+  url_launcher: ^6.2.5
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^4.0.0
+  flutter_launcher_icons: ^0.14.1
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/shloka_db/
+    - assets/places/
+    - assets/images/
+
+# मोबाइल पर ऐप का आइकन (आपका लोगो)
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/images/logo_icon.png"
+  remove_alpha_ios: true
+  adaptive_icon_background: "#FFFFFF"
+  adaptive_icon_foreground: "assets/images/logo_foreground.png"
